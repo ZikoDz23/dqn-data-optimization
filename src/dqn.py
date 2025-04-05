@@ -4,7 +4,7 @@ from keras._tf_keras.keras.layers import Layer
 
 class ReduceMeanLayer(Layer):
     """
-    Couche personnalisée pour encapsuler tf.reduce_mean.
+    Couche personnalisee pour encapsuler tf.reduce_mean.
     """
     def __init__(self, axis=None, keepdims=False):
         super(ReduceMeanLayer, self).__init__()
@@ -27,7 +27,7 @@ class DuelingLayer(Layer):
 
     def call(self, inputs):
         """
-        Implémente la logique de la couche Dueling DQN.
+        Implemente la logique de la couche Dueling DQN
         """
         value, advantage = inputs
         mean_advantage = self.reduce_mean_layer(advantage)
@@ -35,7 +35,7 @@ class DuelingLayer(Layer):
 
 def build_dueling_dqn(state_size, action_size):
     """
-    Construit un modèle Dueling DQN.
+    Construit un modèle Dueling DQN
     """
     inputs = keras._tf_keras.keras.Input(shape=(state_size,))
     x = keras._tf_keras.keras.layers.Dense(128, activation='relu')(inputs)

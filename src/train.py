@@ -66,7 +66,6 @@ def train(db_config, episodes=500, batch_size=32, gamma=0.99, epsilon=1.0, epsil
         if episode % update_target_freq == 0:
             target_model.set_weights(model.get_weights())
             print(f"Épisode {episode}, Récompense totale : {total_reward}, Epsilon : {epsilon}")
-            # Enregistrer total_reward dans TensorBoard
             with summary_writer.as_default():
                 tf.summary.scalar("Total Reward", total_reward, step=episode)
 
