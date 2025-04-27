@@ -3,3 +3,8 @@ venv/
 tpch-dbgen/
 testt.py
 *.pyc
+models/
+JOB/
+convert_listgz_to_csv.py
+imdbpy2sql.py
+TPC-HV3.0.1/

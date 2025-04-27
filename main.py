@@ -2,8 +2,8 @@ from src.train import train
 
 db_config = {
     "host": "localhost",
-    "database": "tpch",
-    "user": "zakaria",
+    "database": "imdbload",
+    "user": "postgres",
     "password": "123456789"
 }
 
