@@ -1,6 +1,5 @@
 import tensorflow as tf
 from keras._tf_keras import keras
-
 from keras._tf_keras.keras import layers 
 
 def build_dueling_dqn(state_size, action_size):

@@ -3,13 +3,14 @@ import random
 import keras
 import tensorflow as tf
 import os
+import csv
 from datetime import datetime
 from src.environment import QueryEnv
 from src.dqn import build_dueling_dqn
 from src.ReplayBuffer import PrioritizedReplayBuffer
 from keras._tf_keras.keras.callbacks import TensorBoard
 
-def train(db_config, episodes=500, batch_size=16, gamma=0.99, epsilon=1.0, 
+def train(db_config, episodes=500, batch_size=32, gamma=0.99, epsilon=1.0, 
           epsilon_min=0.01, epsilon_decay=0.995, update_target_freq=5):
     
     env = QueryEnv(db_config)
@@ -19,12 +20,18 @@ def train(db_config, episodes=500, batch_size=16, gamma=0.99, epsilon=1.0,
     model = build_dueling_dqn(state_size, action_size)
     target_model = build_dueling_dqn(state_size, action_size)
     target_model.set_weights(model.get_weights())
-
-    # Initialize replay buffer
     replay_buffer = PrioritizedReplayBuffer(capacity=10000)
 
     log_dir = "logs/fit/" + datetime.now().strftime("%Y%m%d-%H%M%S")
     os.makedirs("models", exist_ok=True)
+    os.makedirs("logs", exist_ok=True)
+
+    # Préparer le fichier CSV de logs
+    csv_file = "logs/dqn_results.csv"
+    with open(csv_file, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["QueryFile", "ExecutionTime_ms"])
+
     tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
     summary_writer = tf.summary.create_file_writer(log_dir)
 
@@ -86,6 +93,15 @@ def train(db_config, episodes=500, batch_size=16, gamma=0.99, epsilon=1.0,
             with summary_writer.as_default():
                 tf.summary.scalar("Total Reward", total_reward, step=episode)
                 tf.summary.scalar("Epsilon", epsilon, step=episode)
+
+        # Enregistrer les résultats dans le fichier CSV
+        query_filename = env.get_query_filename()
+        execution_time = round(-reward, 2) if reward < 0 else 0.0
+
+        with open(csv_file, "a", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            writer.writerow([query_filename, execution_time])
+
 
     model.save_weights("models/dueling_dqn.weights.h5")
     env.close()

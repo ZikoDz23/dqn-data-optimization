@@ -2,7 +2,7 @@ from src.train import train
 
 db_config = {
     "host": "localhost",
-    "database": "imdbload",
+    "database": "jobtest",
     "user": "postgres",
     "password": "123456789"
 }
