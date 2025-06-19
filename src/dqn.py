@@ -1,32 +1,33 @@
 import tensorflow as tf
 from keras._tf_keras import keras
 from keras._tf_keras.keras import layers 
+from keras._tf_keras.keras import Model
+from keras._tf_keras.keras.layers import Input, Dense, Lambda, Add, Subtract, BatchNormalization, Dropout
+from keras._tf_keras.keras.optimizers import Adam
+import tensorflow as tf
 
-def build_dueling_dqn(state_size, action_size):
-    """
-    Build a Dueling Deep Q-Network model
-    """
-    inputs = keras.Input(shape=(state_size,))
-    
-    # Shared hidden layers
-    x = layers.Dense(64, activation="relu")(inputs)
-    x = layers.Dense(64, activation="relu")(x)
+def build_dueling_dqn(input_dim, action_size):
+    inputs = Input(shape=(input_dim,))
+    x = Dense(128, activation='relu')(inputs)
+    x = BatchNormalization()(x)
+    x = Dropout(0.2)(x)
+    x = Dense(128, activation='relu')(x)
+    x = BatchNormalization()(x)
 
-    # Dueling architecture
-    # Value Stream
-    value = layers.Dense(32, activation="relu")(x)
-    value = layers.Dense(1)(value)
+    # Dueling streams
+    value_fc = Dense(64, activation='relu')(x)
+    value = Dense(1)(value_fc)
 
-    # Advantage Stream
-    advantage = layers.Dense(32, activation="relu")(x)
-    advantage = layers.Dense(action_size)(advantage)
+    advantage_fc = Dense(64, activation='relu')(x)
+    advantage = Dense(action_size)(advantage_fc)
 
-    # Combine value and advantage into Q-values
-    q_values = layers.Lambda(lambda a: a[0] + (a[1] - tf.reduce_mean(a[1], axis=1, keepdims=True)))(
-        [value, advantage]
-    )
+    advantage_mean = Lambda(lambda a: tf.reduce_mean(a, axis=1, keepdims=True))(advantage)
+    q_values = Add()([value, Subtract()([advantage, advantage_mean])])
 
-    model = keras.Model(inputs=inputs, outputs=q_values)
-    model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001), loss="mse")
+    model = Model(inputs=inputs, outputs=q_values)
+
+    # Gradient clipping
+    optimizer = Adam(learning_rate=0.001, clipnorm=1.0)
+    model.compile(optimizer=optimizer, loss='huber')  # plus robuste que MSE
 
     return model

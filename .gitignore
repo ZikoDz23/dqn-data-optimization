@@ -8,3 +8,6 @@ JOB/
 convert_listgz_to_csv.py
 imdbpy2sql.py
 TPC-HV3.0.1/
+*.csv
+.env
+/queries
