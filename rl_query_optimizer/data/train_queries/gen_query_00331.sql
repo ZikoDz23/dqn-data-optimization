@@ -1,0 +1,1 @@
+SELECT count(*) FROM cast_info, name, title, movie_companies, aka_name, char_name, company_name WHERE cast_info.person_id = name.id AND cast_info.movie_id = title.id AND movie_companies.movie_id = title.id AND aka_name.person_id = name.id AND cast_info.person_role_id = char_name.id AND movie_companies.company_id = company_name.id;

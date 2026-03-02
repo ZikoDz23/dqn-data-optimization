@@ -1,0 +1,25 @@
+database:
+  dbname: "job1"
+  user: "ziko"
+  password: "1234"
+  host: "localhost"
+  port: 5432
+  join_collapse_limit: 1  # Force PostgreSQL to respect our join order
+
+rl:
+  gamma: 0.99
+  epsilon_start: 1.0
+  epsilon_end: 0.05
+  epsilon_decay: 10000
+  learning_rate: 1e-4
+  buffer_capacity: 10000
+  batch_size: 64
+  target_update_freq: 1000
+  hidden_dim: 128
+  device: "cpu"
+
+training:
+  episodes: 5000
+  max_steps_per_episode: 20
+  eval_freq: 100
+  checkpoint_dir: "models/"

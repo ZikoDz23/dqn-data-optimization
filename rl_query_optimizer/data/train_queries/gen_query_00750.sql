@@ -1,0 +1,1 @@
+SELECT count(*) FROM title, kind_type, movie_keyword WHERE title.kind_id = kind_type.id AND movie_keyword.movie_id = title.id;
